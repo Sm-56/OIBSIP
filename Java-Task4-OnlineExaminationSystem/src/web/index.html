@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Examination System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="app">
+    <!-- View containers will be swapped by JS -->
+    <div id="login-view" class="view active">
+        <div class="card">
+            <h2>Online Examination</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="error" id="login-error"></div>
+                <button type="submit" class="btn primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="profile-view" class="view">
+        <div class="card">
+            <h2>Student Profile</h2>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label>Username (Read-only)</label>
+                    <input type="text" id="prof-username" readonly disabled>
+                </div>
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input type="text" id="prof-displayname" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password (Optional)</label>
+                    <input type="password" id="prof-password">
+                </div>
+                <div class="success" id="profile-success"></div>
+                <div class="btn-group">
+                    <button type="button" class="btn secondary" id="btn-update-profile">Update Profile</button>
+                    <button type="button" class="btn primary" id="btn-start-exam">Start Exam</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="exam-view" class="view">
+        <div class="exam-header">
+            <div id="student-name">Student: </div>
+            <div id="timer" class="timer">Time Left: 30:00</div>
+        </div>
+        <div class="card exam-card">
+            <h3 id="question-header">Question 1 of 10</h3>
+            <p id="question-text"></p>
+            <div class="options" id="options-container">
+                <!-- Options injected here -->
+            </div>
+            <div class="btn-group exam-nav">
+                <button type="button" class="btn secondary" id="btn-prev" disabled>Previous</button>
+                <button type="button" class="btn primary" id="btn-next">Next</button>
+            </div>
+            <div style="margin-top:20px; text-align:center;">
+                <button type="button" class="btn danger" id="btn-submit-exam">Submit Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-view" class="view">
+        <div class="card">
+            <h2>🎉 Exam Result 🎉</h2>
+            <div class="result-stats">
+                <div class="stat"><span class="label">Score:</span> <span id="res-score" class="badge bg-primary"></span></div>
+                <div class="stat"><span class="label">Correct Answers:</span> <span id="res-correct" class="badge bg-success"></span></div>
+                <div class="stat"><span class="label">Incorrect Answers:</span> <span id="res-incorrect" class="badge bg-danger"></span></div>
+                <div class="stat"><span class="label">Time Taken:</span> <span id="res-time" class="badge bg-info"></span></div>
+                <div class="stat"><span class="label">Percentage:</span> <span id="res-percent" class="badge bg-warning"></span></div>
+            </div>
+            
+            <div id="result-details" class="result-details">
+                <!-- Answer details will be populated here -->
+            </div>
+
+            <div style="margin-top:30px; text-align:center;">
+                <button type="button" class="btn primary" id="btn-logout">Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
