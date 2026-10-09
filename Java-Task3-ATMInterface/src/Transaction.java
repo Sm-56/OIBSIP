@@ -14,6 +14,22 @@ public class Transaction {
         this.dateTime = LocalDateTime.now();
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
     @Override
     public String toString() {
         return dateTime + " | " + type + " | Rs." + amount + " | " + details;

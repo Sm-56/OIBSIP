@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SwiftATM - browser based ATM interface built with Java." />
+  <title>SwiftATM &middot; Online ATM Interface</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%236366f1'/%3E%3Cpath d='M6 9h12M8 15h5' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+
+  <!-- ==================== LOGIN ==================== -->
+  <section id="loginView" class="auth">
+    <aside class="auth-side">
+      <div class="brand brand-lg">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        </span>
+        <span class="brand-text">SwiftATM<small>Online banking demo</small></span>
+      </div>
+
+      <div class="auth-copy">
+        <p class="eyebrow">Java &middot; OIBSIP Task 3</p>
+        <h1>Your ATM, <span class="accent">reimagined</span> for the browser.</h1>
+        <p class="lede">Sign in to withdraw, deposit, transfer and track every rupee with a live transaction ledger.</p>
+        <ul class="feature-list">
+          <li>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            PIN protected login with 3-attempt lockout
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Instant withdraw, deposit &amp; transfers
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Real-time transaction history table
+          </li>
+        </ul>
+      </div>
+
+      <p class="auth-foot">Powered by Java HttpServer &middot; zero external dependencies</p>
+    </aside>
+
+    <div class="auth-main">
+      <form class="form-card" id="loginForm" autocomplete="off">
+        <div class="form-brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+          </span>
+          <span class="brand-text">SwiftATM<small>Secure sign in</small></span>
+        </div>
+
+        <h2>Welcome back</h2>
+        <p class="sub">Enter your credentials to access the dashboard.</p>
+
+        <label class="field">
+          <span>User ID</span>
+          <input id="userId" type="text" placeholder="e.g. user01" required autofocus />
+        </label>
+
+        <label class="field">
+          <span>ATM PIN</span>
+          <input id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="4 digit PIN" required />
+        </label>
+
+        <p class="form-error hidden" id="loginError" role="alert"></p>
+
+        <button class="btn btn-primary btn-block" type="submit" id="loginBtn">
+          <span class="btn-label">Sign in to dashboard</span>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+        </button>
+
+        <div class="demo">
+          <span class="demo-label">Demo accounts</span>
+          <button type="button" class="demo-chip" data-user="user01" data-pin="1234">user01 &middot; 1234</button>
+          <button type="button" class="demo-chip" data-user="user02" data-pin="5678">user02 &middot; 5678</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ==================== DASHBOARD ==================== -->
+  <div id="appView" class="hidden">
+    <header class="navbar">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        </span>
+        <span class="brand-text">SwiftATM<small>Online banking demo</small></span>
+      </div>
+      <div class="nav-right">
+        <span class="user-pill"><span class="dot"></span><span id="navUser">-</span></span>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+          Logout
+        </button>
+      </div>
+    </header>
+
+    <main class="page">
+
+      <!-- STATS -->
+      <section class="stats">
+        <article class="card balance-card">
+          <div class="bc-top">
+            <span class="bc-label">Available balance</span>
+            <span class="bc-chip">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h4M7 13h2M15 13h2"/></svg>
+            </span>
+          </div>
+          <div class="bc-amount" id="balanceAmount">&#8377;0.00</div>
+          <div class="bc-foot">
+            <span id="cardUser">-</span>
+            <span class="bc-brand">SWIFT &middot; ATM</span>
+          </div>
+        </article>
+
+        <article class="card stat-card">
+          <div class="stat-ico ico-indigo">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="stat-body">
+            <p class="stat-label">Account</p>
+            <p class="stat-value" id="statUser">-</p>
+            <p class="stat-sub"><span class="dot"></span> Active session</p>
+          </div>
+        </article>
+
+        <article class="card stat-card">
+          <div class="stat-ico ico-mint">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+          </div>
+          <div class="stat-body">
+            <p class="stat-label">Transactions</p>
+            <p class="stat-value" id="statCount">0</p>
+            <p class="stat-sub" id="statLast">No activity yet</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- CTA / QUICK ACTIONS -->
+      <div class="section-head">
+        <div>
+          <h2>Quick actions</h2>
+          <p class="section-sub">Choose an operation to continue</p>
+        </div>
+      </div>
+
+      <section class="actions">
+        <button class="action action-wd" data-op="withdraw" type="button">
+          <span class="action-ico">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          </span>
+          <span class="action-body">
+            <strong>Withdraw</strong>
+            <span>Take cash out of your account</span>
+          </span>
+          <span class="action-go">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+          </span>
+        </button>
+
+        <button class="action action-dp" data-op="deposit" type="button">
+          <span class="action-ico">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M5 3h14"/></svg>
+          </span>
+          <span class="action-body">
+            <strong>Deposit</strong>
+            <span>Add money into your account</span>
+          </span>
+          <span class="action-go">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+          </span>
+        </button>
+
+        <button class="action action-tr" data-op="transfer" type="button">
+          <span class="action-ico">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13"/><path d="M13 4l4 4-4 4"/><path d="M20 16H7"/><path d="M11 12l-4 4 4 4"/></svg>
+          </span>
+          <span class="action-body">
+            <strong>Transfer</strong>
+            <span>Send money to another account</span>
+          </span>
+          <span class="action-go">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg>
+          </span>
+        </button>
+      </section>
+
+      <!-- TRANSACTION HISTORY -->
+      <div class="section-head">
+        <div>
+          <h2>Transaction history</h2>
+          <p class="section-sub">Every movement on your account</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="refreshBtn" type="button">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <section class="card table-card">
+        <div class="table-scroll">
+          <table id="txTable">
+            <thead>
+              <tr>
+                <th class="col-id">#</th>
+                <th>Date &amp; time</th>
+                <th>Type</th>
+                <th>Details</th>
+                <th class="col-amt">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="txBody"></tbody>
+          </table>
+        </div>
+        <div class="empty hidden" id="txEmpty">
+          <span class="empty-ico">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </span>
+          <h3>No transactions yet</h3>
+          <p>Use the quick actions above to make your first deposit.</p>
+        </div>
+      </section>
+
+      <footer class="page-foot">ATM Interface &middot; Java OIBSIP Task 3 &middot; running on localhost</footer>
+    </main>
+  </div>
+
+  <!-- ==================== MODAL ==================== -->
+  <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <span class="modal-ico" id="modalIco"></span>
+        <div class="modal-titles">
+          <h3 id="modalTitle">Withdraw</h3>
+          <p id="modalHint">Enter an amount</p>
+        </div>
+        <button class="icon-btn" id="modalClose" type="button" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <form id="opForm">
+        <div class="field hidden" id="receiverRow">
+          <span>Receiver User ID</span>
+          <input id="receiverId" type="text" list="accountList" placeholder="e.g. user02" autocomplete="off" />
+          <datalist id="accountList">
+            <option value="user01"></option>
+            <option value="user02"></option>
+          </datalist>
+        </div>
+
+        <div class="field">
+          <span>Amount (&#8377;)</span>
+          <div class="amount-wrap">
+            <span class="amount-prefix">&#8377;</span>
+            <input id="amount" type="number" min="1" step="0.01" placeholder="0.00" required />
+          </div>
+          <div class="quick-chips">
+            <button type="button" class="chip" data-amt="100">100</button>
+            <button type="button" class="chip" data-amt="500">500</button>
+            <button type="button" class="chip" data-amt="1000">1,000</button>
+            <button type="button" class="chip" data-amt="5000">5,000</button>
+          </div>
+        </div>
+
+        <p class="form-error hidden" id="opError" role="alert"></p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="modalCancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="opSubmit">Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== TOASTS ==================== -->
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

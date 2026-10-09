@@ -1,0 +1,6 @@
+# Compiled Java class files
+*.class
+
+# Server runtime logs
+server.log
+server.err.log
